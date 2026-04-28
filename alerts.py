@@ -40,8 +40,9 @@ def get_stats():
         "by_type":     by_type,
     }
 
+
+"""
 if __name__ == "__main__":
-    # Test rapide — à supprimer une fois validé
     add_alert("PORT SCAN",  "192.168.1.10", "22 ports scannés en 5s", "CRITICAL")
     add_alert("FLOOD",      "10.0.0.5",     "150 paquets en 5s",      "HIGH")
     add_alert("PAYLOAD",    "172.16.0.3",   "Pattern: /etc/passwd",   "MEDIUM")
@@ -49,6 +50,7 @@ if __name__ == "__main__":
     print("\n--- Stats ---")
     print(get_stats())
 
-    print("\n--- Alertes (antichronologique) ---")
+    print("\n--- Alertes ---")
     for a in get_alerts():
         print(a)
+"""
