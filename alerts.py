@@ -1,15 +1,19 @@
-"""
-Que va servir "alterts.py" ? 
-Il va permettre de gérer les alertes dans l'application.
-Stocke les alertes en mémoire et les affiche dans la console.
+import time
+from datetime import datetime
 
-"""
 
 alerts = []
 
-def add_alert(alert_type: str, src_ip: str, detail: str, severity: str = "MEDIUM"):
-    from datetime import datetime
+SEVERITY_COLORS = {
+    "LOW":      "\033[93m",   # Jaune
+    "MEDIUM":   "\033[91m",   # Rouge clair
+    "HIGH":     "\033[31m",   # Rouge foncé
+    "CRITICAL": "\033[1;31m", # Rouge gras
+}
+RESET = "\033[0m"
 
+def add_alert(alert_type: str, src_ip: str, detail: str, severity: str = "MEDIUM"):
+    """Enregistre une alerte et l'affiche dans la console."""
     alert = {
         "id":        len(alerts) + 1,
         "timestamp": datetime.now().strftime("%H:%M:%S"),
@@ -20,37 +24,28 @@ def add_alert(alert_type: str, src_ip: str, detail: str, severity: str = "MEDIUM
     }
     alerts.append(alert)
 
+    color = SEVERITY_COLORS.get(severity, "")
+    print(
+        f"{color}[ALERTE {severity}] {alert['timestamp']} | "
+        f"{alert_type} | {src_ip} | {detail}{RESET}"
+    )
+
 def get_alerts():
+    """Retourne toutes les alertes (pour le dashboard)."""
     return list(reversed(alerts))
 
-
 def get_stats():
-
+    """Retourne des statistiques globales."""
     total = len(alerts)
     by_severity = {}
     by_type = {}
 
     for a in alerts:
         by_severity[a["severity"]] = by_severity.get(a["severity"], 0) + 1
-        by_type[a["type"]] = by_type.get(a["type"], 0) + 1
+        by_type[a["type"]]         = by_type.get(a["type"], 0) + 1
 
     return {
         "total":       total,
         "by_severity": by_severity,
         "by_type":     by_type,
     }
-
-
-"""
-if __name__ == "__main__":
-    add_alert("PORT SCAN",  "192.168.1.10", "22 ports scannés en 5s", "CRITICAL")
-    add_alert("FLOOD",      "10.0.0.5",     "150 paquets en 5s",      "HIGH")
-    add_alert("PAYLOAD",    "172.16.0.3",   "Pattern: /etc/passwd",   "MEDIUM")
-
-    print("\n--- Stats ---")
-    print(get_stats())
-
-    print("\n--- Alertes ---")
-    for a in get_alerts():
-        print(a)
-"""
